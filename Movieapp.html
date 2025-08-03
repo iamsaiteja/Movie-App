@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Search App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-right: 10px;
+      border-radius: 4px;
+      border: none;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #f39c12;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+    }
+    .movie-card {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: left;
+      margin-top: 20px;
+    }
+    .movie-card img {
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 Movie Search App</h1>
+    <input type="text" id="searchInput" placeholder="Enter movie title..." />
+    <button onclick="searchMovie()">Search</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const apiKey = 'your_api_key_here'; // Replace with your OMDb API key
+
+    function searchMovie() {
+      const title = document.getElementById('searchInput').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!title) {
+        resultDiv.innerHTML = '<p>Please enter a movie title.</p>';
+        return;
+      }
+
+      resultDiv.innerHTML = '<p>Loading...</p>';
+
+      fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.Response === "False") {
+            resultDiv.innerHTML = `<p>Movie not found. Try another title.</p>`;
+          } else {
+            resultDiv.innerHTML = `
+              <div class="movie-card">
+                <h2>${data.Title} (${data.Year})</h2>
+                <img src="${data.Poster}" alt="Poster" />
+                <p><strong>Genre:</strong> ${data.Genre}</p>
+                <p><strong>Plot:</strong> ${data.Plot}</p>
+                <p><strong>IMDb Rating:</strong> ${data.imdbRating}</p>
+              </div>
+            `;
+          }
+        })
+        .catch(() => {
+          resultDiv.innerHTML = '<p>Error fetching movie data.</p>';
+        });
+    }
+  </script>
+</body>
+</html>
